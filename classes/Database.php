@@ -1,8 +1,5 @@
 <?php
 
-/**
- *
- */
 class Database
 {
   private static $INSTANCE = null;
@@ -31,6 +28,42 @@ class Database
 
     return self::$INSTANCE;
   }
+
+  public function insert($table, $fields = array())
+  {
+    //mengambil kolom
+    $column = implode(", ", array_keys($fields));
+
+    //mengambil value
+    $valueArrays = array();
+    $i = 0;
+    foreach($fields as $key => $values) {
+      if ( is_int($values) ) {
+        $valuesArrays[$i] = $this->escape($values);
+      }else {
+        $valuesArrays[$i] = "'" . $this->escape($values) . "'";
+      }
+      $i++;
+    }
+    //var_dump($valuesArrays);
+    $values = implode(", ", $valuesArrays);
+
+    $query = "INSERT INTO $table ($column) VALUES ($values)";
+
+    return $this->run_query($query, 'masalah saat memasukkan data!');
+  }
+
+  public function run_query($query, $msg)
+  {
+    if($this->mysqli->query($query)) return true;
+    else die($msg);
+  }
+
+  public function escape($name)
+  {
+    return $this->mysqli->real_escape_string($name);
+  }
+
 }
 
  ?>
