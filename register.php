@@ -1,6 +1,10 @@
 <?php
 require_once 'core/init.php';
 
+if( Session::exists('username') ){
+  header('location: profile.php');
+}
+
 $errors = array();
 //uji tombol submit
 if (Input::get('submit') ){
@@ -27,6 +31,10 @@ if (Input::get('submit') ){
       'username' => Input::get('username'),
       'password' => password_hash(Input::get('password'), PASSWORD_DEFAULT)
   ));
+
+  Session::set('username', Input::get('username'));
+  header('location: profile.php');
+
   }else {
     $errors = $validation->errors();
   }
